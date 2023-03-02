@@ -143,7 +143,7 @@ class _ContinueReadingScreenState extends State<ContinueReadingScreen> {
                           ],
                         )
                     ),
-                    Positioned(
+                    /*Positioned(
                         right: 20,
                         bottom: -10,
                         child: Container(
@@ -154,7 +154,7 @@ class _ContinueReadingScreenState extends State<ContinueReadingScreen> {
                               borderRadius: BorderRadius.circular(20)
                           ),
                           child: Text('\$ ${widget.snapshotData['bookPrice']}',style: TextStyle(color: AppColor.whiteColor),),
-                        ),)
+                        ),)*/
                   ],
                 ),
                 Padding(
@@ -413,7 +413,7 @@ class _ContinueReadingScreenState extends State<ContinueReadingScreen> {
                                                   padding: const EdgeInsets.only(left: 10,right: 10,bottom: 10),
                                                   child: Center(
                                                       child: Text(snapshot.data!.docs[index]['bookDescription'],
-                                                        style: const TextStyle(color: AppColor.blackColor,fontSize: 10,overflow: TextOverflow.ellipsis),textAlign:TextAlign.center,maxLines: 2,)),
+                                                        style: const TextStyle(color: AppColor.blackColor,fontSize: 10,overflow: TextOverflow.ellipsis),textAlign:TextAlign.center,maxLines: 1,)),
                                                 ),
 
                                               ],

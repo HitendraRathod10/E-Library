@@ -109,22 +109,24 @@ class _AddBookScreenState extends State<AddBookScreen> {
       where('userMobile',isEqualTo: FirebaseCollection.currentUserId).get();
       
       for(var snapshotData in querySnapShot.docChanges){
-        AddBookProvider().createBook(
-            bookTitle: bookTitleController.text,
-            bookSubTitle: bookSubTitleController.text,
-            authorName: authorNameController.text.trim(),
-            publisher: publisherController.text,
-            publishDate: publishDateController.text,
-            bookDescription: descriptionController.text,
-            country: Provider.of<AddBookProvider>(context,listen: false).selectCountry.toString(),
-            bookType: Provider.of<AddBookProvider>(context,listen: false).selectBookGenre.toString(),
-            bookPrice: priceController.text,
-            bookImage: imageUrl,
-            bookPdf: bookUrl,
-            timestamp: Timestamp.now(),
-            currentUserMobile: FirebaseAuth.instance.currentUser!.phoneNumber.toString(), bookRating: 0.1,
-            userName: snapshotData.doc.get('userName')
-        );
+        for (var v = 0; v<15; v++) {
+          AddBookProvider().createBook(
+              bookTitle: bookTitleController.text,
+              bookSubTitle: bookSubTitleController.text,
+              authorName: authorNameController.text.trim(),
+              publisher: publisherController.text,
+              publishDate: publishDateController.text,
+              bookDescription: descriptionController.text,
+              country: Provider.of<AddBookProvider>(context,listen: false).selectCountry.toString(),
+              bookType: Provider.of<AddBookProvider>(context,listen: false).selectBookGenre.toString(),
+              bookPrice: priceController.text,
+              bookImage: imageUrl,
+              bookPdf: bookUrl,
+              timestamp: Timestamp.now(),
+              currentUserMobile: FirebaseAuth.instance.currentUser!.phoneNumber.toString(), bookRating: 0.1,
+              userName: snapshotData.doc.get('userName')
+          );
+        }
         AppUtils.instance.showToast(toastMessage: 'Added Book');
         Provider.of<LoadingProvider>(context,listen: false).stopLoading();
         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const BottomNavBarScreen()));
@@ -183,7 +185,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('Create Book',style: TextStyle(fontSize: 20)),
+                      const Text('Add Book',style: TextStyle(fontSize: 20)),
                       const SizedBox(height: 40,),
                       TextFieldMixin().textFieldWidget(
                         labelText: 'Book Title',

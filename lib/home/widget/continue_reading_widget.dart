@@ -52,7 +52,7 @@ class ContinueReadingWidget extends StatelessWidget {
                             children: [
                               ClipRRect(
                                 child: Image.network(snapshot.data?.docs[index]['bookImage'],
-                                    height: 100,width: 90,fit: BoxFit.fill
+                                    height: 100,width: 90,fit: BoxFit.contain
                                 ),
                               ),
                               Expanded(

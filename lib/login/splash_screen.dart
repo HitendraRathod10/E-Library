@@ -45,14 +45,14 @@ class SplashScreenState extends State<SplashScreen>{
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
-      backgroundColor: AppColor.whiteColor,
+      backgroundColor: const Color(0xffF4F4F9),
       body: Center(
         child:Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(AppImage.appLogo,height: 130,width: 130,fit: BoxFit.fill),
+            Image.asset(AppImage.newSplashLogo,height: 200,width: 200,fit: BoxFit.fill),
             const SizedBox(height: 10),
-            const Text('Ebook',style: TextStyle(color: AppColor.appColor,fontSize: 20))
+            const Text('E-Library',style: TextStyle(color: AppColor.appColor,fontSize: 20))
           ],
         ),
       ),

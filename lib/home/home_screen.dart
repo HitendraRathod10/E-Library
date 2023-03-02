@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
          Scaffold(
           backgroundColor: AppColor.whiteColor,
           appBar: AppBar(
-            title: const Text('My Ebook'),
+            title: const Text('E-Library'),
             actions:  [
               StreamBuilder(
                   stream: FirebaseCollection().userCollection.doc(FirebaseCollection.currentUserId).snapshots(),

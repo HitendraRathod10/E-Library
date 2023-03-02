@@ -6,11 +6,11 @@ import FlutterMacOS
 import Foundation
 
 import cloud_firestore
-import connectivity_plus_macos
+import connectivity_plus
 import firebase_auth
 import firebase_core
 import firebase_storage
-import shared_preferences_macos
+import shared_preferences_foundation
 import smart_auth
 import syncfusion_pdfviewer_macos
 import url_launcher_macos

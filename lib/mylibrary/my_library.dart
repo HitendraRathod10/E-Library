@@ -73,15 +73,15 @@ class MyLibrary extends StatelessWidget {
                                             child: Text(snapshot.data?.docs[index]['bookTitle'],
                                                 style : const TextStyle(color: AppColor.darkGreen,fontSize: 16),maxLines: 1,overflow: TextOverflow.ellipsis),
                                           ),
-                                          Container(
-                                            padding: const EdgeInsets.only(left: 10,right: 10,top: 5,bottom: 5),
-                                            decoration: BoxDecoration(
-                                                color: AppColor.darkGreen,
-                                                borderRadius: BorderRadius.circular(10)
-                                            ),
-                                            child: Text('\$ ${snapshot.data?.docs[index]['bookPrice']}',
-                                                style: const TextStyle(color: AppColor.whiteColor,fontSize: 12),maxLines: 1,overflow: TextOverflow.ellipsis),
-                                          ),
+                                          // Container(
+                                          //   padding: const EdgeInsets.only(left: 10,right: 10,top: 5,bottom: 5),
+                                          //   decoration: BoxDecoration(
+                                          //       color: AppColor.darkGreen,
+                                          //       borderRadius: BorderRadius.circular(10)
+                                          //   ),
+                                          //   child: Text('\$ ${snapshot.data?.docs[index]['bookPrice']}',
+                                          //       style: const TextStyle(color: AppColor.whiteColor,fontSize: 12),maxLines: 1,overflow: TextOverflow.ellipsis),
+                                          // ),
                                         ],
                                       ),
 

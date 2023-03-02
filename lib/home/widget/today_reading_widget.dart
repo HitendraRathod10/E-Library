@@ -78,7 +78,7 @@ class TodayReadingWidget extends StatelessWidget {
                                             ClipRRect(
                                               borderRadius: const BorderRadius.only(topLeft: Radius.circular(20)),
                                               child: Image.network(snapshot.data?.docs[index]['bookImage'],
-                                                  height: 180,width: double.infinity,fit: BoxFit.fill),
+                                                  height: 180,width: double.infinity,fit: BoxFit.contain),
                                             ),
                                             const SizedBox(height: 10),
                                             Padding(
@@ -90,24 +90,26 @@ class TodayReadingWidget extends StatelessWidget {
                                               height: 38,
                                               padding: const EdgeInsets.only(left: 10,right: 10,top: 5,bottom: 5),
                                               child: Text(snapshot.data?.docs[index]['bookDescription'],
-                                                style: const TextStyle(color: AppColor.blackColor,fontSize: 12),maxLines: 2,overflow: TextOverflow.ellipsis,),
+                                                style: const TextStyle(color: AppColor.blackColor,fontSize: 12),maxLines: 1,overflow: TextOverflow.ellipsis,),
                                             ),
-                                            SizedBox(
-                                              width: double.infinity,
-                                              height: 35,
-                                              child: ElevatedButton(
-                                                  onPressed: () {
-                                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>ContinueReadingScreen(snapshotData: snapshot.data!.docs[index])));
-                                                  },
-                                                  style: ButtonStyle(
-                                                      backgroundColor: MaterialStateProperty.all<Color>(AppColor.darkGreen),
-                                                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                                          const RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.only(topLeft: Radius.circular(20),bottomRight: Radius.circular(30)),
-                                                          )
-                                                      )
-                                                  ),
-                                                  child: const Text('Read')
+                                            Expanded(
+                                              child: SizedBox(
+                                                width: double.infinity,
+                                                // height: 35,
+                                                child: ElevatedButton(
+                                                    onPressed: () {
+                                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>ContinueReadingScreen(snapshotData: snapshot.data!.docs[index])));
+                                                    },
+                                                    style: ButtonStyle(
+                                                        backgroundColor: MaterialStateProperty.all<Color>(AppColor.darkGreen),
+                                                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                            const RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.only(topLeft: Radius.circular(20),bottomRight: Radius.circular(30)),
+                                                            )
+                                                        )
+                                                    ),
+                                                    child: const Text('Read')
+                                                ),
                                               ),
                                             )
                                           ],

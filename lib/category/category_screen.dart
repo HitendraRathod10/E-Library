@@ -82,7 +82,7 @@ class CategoryScreen extends StatelessWidget {
                                 ClipRRect(
                                   borderRadius: const BorderRadius.only(topRight: Radius.circular(10),topLeft: Radius.circular(10)),
                                   child: Image.asset(bookType[index].bookImage,
-                                  height: 120,width: double.infinity,fit: BoxFit.fill),
+                                  height: 120,width: double.infinity,fit: BoxFit.cover),
                                 ),
                                 const SizedBox(height: 5),
                                 Expanded(

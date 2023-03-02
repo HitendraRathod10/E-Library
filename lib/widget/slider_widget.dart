@@ -85,7 +85,7 @@ class SliderWidget extends StatelessWidget {
                                   ),
                                   child: Image.network(snapshot.data?.docs[index]['bookImage'],
                                     height: MediaQuery.of(context).size.height/3,
-                                    width: MediaQuery.of(context).size.width,fit: BoxFit.fill,)),
+                                    width: MediaQuery.of(context).size.width,fit: BoxFit.cover,)),
                               Positioned(
                                   top : 150,
                                   child: Container(

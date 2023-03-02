@@ -1,33 +1,41 @@
 {
   "project_info": {
-    "project_number": "714531905514",
-    "project_id": "ebookapp-82daa",
-    "storage_bucket": "ebookapp-82daa.appspot.com"
+    "project_number": "171114144110",
+    "project_id": "e-library-2991a",
+    "storage_bucket": "e-library-2991a.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:714531905514:android:649634972cba57d766dc93",
+        "mobilesdk_app_id": "1:171114144110:android:259490c02b64538ed1217f",
         "android_client_info": {
-          "package_name": "com.example.ebook"
+          "package_name": "com.elsner.elibrary"
         }
       },
       "oauth_client": [
         {
-          "client_id": "714531905514-3698kktld5esbjiqgcqtrgt1mj1agin4.apps.googleusercontent.com",
+          "client_id": "171114144110-j0ee0aip72n1v7d4dg5hvgodflh3gm80.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.elsner.elibrary",
+            "certificate_hash": "f50db20fd6b8228061e3fb716ec356b084c73052"
+          }
+        },
+        {
+          "client_id": "171114144110-rt7o2l7f6ptusdd4201im1o5vkchp2up.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD4IDN8uSwoEnwki9mF1rCt8LqnwLN7EXk"
+          "current_key": "AIzaSyAt5t_jllOs59ysnQUx5sSsHBwALf13phg"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "714531905514-3698kktld5esbjiqgcqtrgt1mj1agin4.apps.googleusercontent.com",
+              "client_id": "171114144110-rt7o2l7f6ptusdd4201im1o5vkchp2up.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
