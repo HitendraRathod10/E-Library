@@ -7,10 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/internet_provider.dart';
-
+//ignore: must_be_immutable
 class PopularAuthorScreen extends StatefulWidget {
 
-  var snapShotData;
+  dynamic snapShotData;
   PopularAuthorScreen({Key? key,required this.snapShotData}) : super(key: key);
 
   @override

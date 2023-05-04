@@ -4,10 +4,10 @@ import 'package:ebook/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import '../../firebase/firebase_collection.dart';
-
+//ignore: must_be_immutable
 class ViewRatingBookScreen extends StatefulWidget {
-  final ratingSnapshotData;
-  const ViewRatingBookScreen({Key? key,required this.ratingSnapshotData}) : super(key: key);
+  dynamic ratingSnapshotData;
+  ViewRatingBookScreen({Key? key,required this.ratingSnapshotData}) : super(key: key);
 
   @override
   State<ViewRatingBookScreen> createState() => _ViewRatingBookScreenState();

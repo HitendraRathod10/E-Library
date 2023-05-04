@@ -1,20 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ebook/home/provider/home_provider.dart';
 import 'package:ebook/home/provider/internet_provider.dart';
-import 'package:ebook/home/screen/continue_reading.dart';
 import 'package:ebook/home/screen/no_internet_screen.dart';
 import 'package:ebook/home/screen/popular_author_screen.dart';
 import 'package:ebook/home/widget/continue_reading_widget.dart';
 import 'package:ebook/home/widget/today_reading_widget.dart';
 import 'package:ebook/utils/app_colors.dart';
 import 'package:ebook/utils/app_images.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import '../firebase/firebase_collection.dart';
 import '../shimmers/popular_author_shimmer.dart';
-import '../shimmers/reading_shimmers.dart';
 import '../widget/slider_widget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -49,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
       internetSnapshot.checkInternet().then((value) {
       });
       //print(todayReadingSnapshot.checkTodayData());
-      print("abcd ${internetSnapshot.isInternet}");
+      debugPrint("abcd ${internetSnapshot.isInternet}");
       return internetSnapshot.isInternet?
          Scaffold(
           backgroundColor: AppColor.whiteColor,

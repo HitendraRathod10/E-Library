@@ -15,7 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../home/provider/internet_provider.dart';
 import '../widget/bottom_navigation_bar.dart';
-import '../widget/provider/loading-provider.dart';
+import '../widget/provider/loading_provider.dart';
 
 class AddBookScreen extends StatefulWidget {
   const AddBookScreen({Key? key}) : super(key: key);
@@ -109,7 +109,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
       where('userMobile',isEqualTo: FirebaseCollection.currentUserId).get();
       
       for(var snapshotData in querySnapShot.docChanges){
-        for (var v = 0; v<15; v++) {
           AddBookProvider().createBook(
               bookTitle: bookTitleController.text,
               bookSubTitle: bookSubTitleController.text,
@@ -126,7 +125,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
               currentUserMobile: FirebaseAuth.instance.currentUser!.phoneNumber.toString(), bookRating: 0.1,
               userName: snapshotData.doc.get('userName')
           );
-        }
         AppUtils.instance.showToast(toastMessage: 'Added Book');
         Provider.of<LoadingProvider>(context,listen: false).stopLoading();
         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const BottomNavBarScreen()));

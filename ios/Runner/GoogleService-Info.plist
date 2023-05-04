@@ -3,21 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>714531905514-fkleb9n06341uk82nmstip7o9hsfplep.apps.googleusercontent.com</string>
+	<string>171114144110-o4rnl921fuj1fsr1ltv4dssmntv850hj.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.714531905514-fkleb9n06341uk82nmstip7o9hsfplep</string>
+	<string>com.googleusercontent.apps.171114144110-o4rnl921fuj1fsr1ltv4dssmntv850hj</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>171114144110-1sj5s1riui86vkab98lfp5af1do3bhaa.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyD64Z8GdzGhs7Id79soJ1zJ4iJOmhnX-X0</string>
+	<string>AIzaSyAUPJJ1c0KO_rVzW23ecW2dibq6u0TDECg</string>
 	<key>GCM_SENDER_ID</key>
-	<string>714531905514</string>
+	<string>171114144110</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.elsner.elibrary</string>
 	<key>PROJECT_ID</key>
-	<string>ebookapp-82daa</string>
+	<string>e-library-2991a</string>
 	<key>STORAGE_BUCKET</key>
-	<string>ebookapp-82daa.appspot.com</string>
+	<string>e-library-2991a.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:714531905514:ios:dab9f29bb1ce0d7866dc93</string>
+	<string>1:171114144110:ios:568570e269b31f8dd1217f</string>
 </dict>
 </plist>

@@ -14,7 +14,7 @@ import '../firebase/firebase_collection.dart';
 import '../home/provider/internet_provider.dart';
 import '../login/provider/login_provider.dart';
 import '../utils/app_utils.dart';
-import '../widget/provider/loading-provider.dart';
+import '../widget/provider/loading_provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);
@@ -68,6 +68,7 @@ class _EditProfileScreen extends State<EditProfileScreen> {
       final imageUrl = await snapshot.ref.getDownloadURL().whenComplete(() {});
 
       AppUtils.instance.showToast(toastMessage: "Update Profile");
+      if (!mounted) return;
       Provider.of<LoginProvider>(context,listen: false).addEmployee(
           userEmail: emailController.text.trim(),
           userName: nameController.text.trim(),
@@ -77,7 +78,7 @@ class _EditProfileScreen extends State<EditProfileScreen> {
       Navigator.pop(context);
       debugPrint("Image URL = $imageUrl");
     } catch (e) {
-      print('Failed to upload image');
+      debugPrint('Failed to upload image');
     }
   }
 
@@ -171,6 +172,7 @@ class _EditProfileScreen extends State<EditProfileScreen> {
                                   if(value!.isEmpty){
                                     return 'Name is Required';
                                   }
+                                  return null;
                                 },
                               ),
                               const SizedBox(height: 20,),

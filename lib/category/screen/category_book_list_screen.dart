@@ -7,7 +7,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 import '../../home/provider/internet_provider.dart';
 import '../../utils/app_colors.dart';
-
+//ignore: must_be_immutable
 class CategoryBookListScreen extends StatefulWidget {
 
   String genreName;

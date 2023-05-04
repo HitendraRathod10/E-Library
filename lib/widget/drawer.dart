@@ -14,7 +14,7 @@ class DrawerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(FirebaseAuth.instance.currentUser!.phoneNumber.toString().substring(3,13));
+    debugPrint(FirebaseAuth.instance.currentUser!.phoneNumber.toString().substring(3,13));
     return Drawer(
       backgroundColor: AppColor.whiteColor,
       child: ListView(

@@ -12,11 +12,11 @@ import 'package:provider/provider.dart';
 import '../../firebase/firebase_collection.dart';
 import '../firebaseauthprovider/home_firebase_auth.dart';
 import '../provider/internet_provider.dart';
-
+//ignore: must_be_immutable
 class ContinueReadingScreen extends StatefulWidget {
 
-  final snapshotData;
-  const ContinueReadingScreen({Key? key,required this.snapshotData}) : super(key: key);
+  dynamic snapshotData;
+  ContinueReadingScreen({Key? key,required this.snapshotData}) : super(key: key);
 
   @override
   State<ContinueReadingScreen> createState() => _ContinueReadingScreenState();
@@ -298,7 +298,7 @@ class _ContinueReadingScreenState extends State<ContinueReadingScreen> {
                                   //debugPrint('Collection Length ${queryUserRatingSnapshots.docs.length}');
                                   //debugPrint('Collection Length1 ${snapshot.doc.get('bookRating')}');
                                  // double tot = 0.0;
-                                  for(int i = 0;i<1;i++){
+                                 //  for(int i = 0;i<1;i++){
                                     userRating = snapshot.doc.get('bookRating');
                                     debugPrint('User Rating $userRating');
                                     ratingList.add(snapshot.doc.get('bookRating'));
@@ -308,7 +308,7 @@ class _ContinueReadingScreenState extends State<ContinueReadingScreen> {
                                     rating = sum/userLength;
                                     debugPrint('User Rating => $sum = $userLength = $rating');
                                     break;
-                                  }
+                                  // }
                                 }
                                 for(var bookSnapshot in queryBookSnapshots.docChanges){
                                     bookTitle = bookSnapshot.doc.get('bookTitle');

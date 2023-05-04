@@ -3,7 +3,7 @@ import 'package:ebook/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 import '../../utils/app_images.dart';
-
+//ignore: must_be_immutable
 class OtpScreen extends StatefulWidget {
   String verificationId;
   String phoneNumber;
@@ -61,7 +61,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         ),
                         child:  ElevatedButton(
                             onPressed: () async {
-                              print('verification => ${widget.verificationId}');
+                              debugPrint('verification => ${widget.verificationId}');
                               await MobileAuthProvider().userPhoneVerify(context, otpController.text.toString(),widget.verificationId,widget.phoneNumber);
                             },
                             style: ButtonStyle(

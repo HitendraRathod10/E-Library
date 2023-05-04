@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-
+//ignore: must_be_immutable
 class ReadPdfScreen extends StatefulWidget {
 
   String url;
@@ -60,7 +60,7 @@ class _ReadPdfScreenState extends State<ReadPdfScreen> {
         ],
       ),
       
-      body: widget.url == null ? const Center(child: CircularProgressIndicator(strokeWidth: 4,color: Colors.indigo)) :
+      body: widget.url == '' ? const Center(child: CircularProgressIndicator(strokeWidth: 4,color: Colors.indigo)) :
       SfPdfViewer.network(
           scrollDirection : PdfScrollDirection.vertical,
           //pageLayoutMode : PdfPageLayoutMode.single,

@@ -14,11 +14,11 @@ class InternetProvider extends ChangeNotifier {
         if (result == ConnectivityResult.mobile ||
             result == ConnectivityResult.wifi) {
           isInternet = true;
-          print('internet');
+          debugPrint('internet');
           notifyListeners();
         } else {
           isInternet = false;
-          print('no internet');
+          debugPrint('no internet');
           notifyListeners();
         }
       });

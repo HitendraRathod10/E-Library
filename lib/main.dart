@@ -5,12 +5,12 @@ import 'package:ebook/login/provider/login_provider.dart';
 import 'package:ebook/login/splash_screen.dart';
 import 'package:ebook/utils/app_colors.dart';
 import 'package:ebook/widget/loading_screen.dart';
-import 'package:ebook/widget/provider/loading-provider.dart';
+import 'package:ebook/widget/provider/loading_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'login/firebaseauth/phone_sign_in_auth.dart';
-
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -39,6 +39,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<HomeProvider>(create: (_) => HomeProvider()),
     ],
       child: MaterialApp(
+        navigatorKey: navigatorKey,
         theme: ThemeData(
           visualDensity: VisualDensity.adaptivePlatformDensity,
           elevatedButtonTheme: ElevatedButtonThemeData(

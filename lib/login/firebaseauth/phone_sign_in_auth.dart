@@ -3,10 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../firebase/firebase_collection.dart';
+import '../../main.dart';
 import '../../utils/app_preference_key.dart';
 import '../../utils/app_utils.dart';
 import '../../widget/bottom_navigation_bar.dart';
-import '../../widget/provider/loading-provider.dart';
+import '../../widget/provider/loading_provider.dart';
 import '../screen/register_screen.dart';
 
 class MobileAuthProvider extends ChangeNotifier {
@@ -77,56 +78,48 @@ class MobileAuthProvider extends ChangeNotifier {
        Provider.of<LoadingProvider>(context,listen: false).stopLoading();
 
        var querySnapshots = await FirebaseCollection().userCollection.get();
-       print("querySnapshots ${querySnapshots.docs.length}");
-       print("querySnapshots ${querySnapshots.docs.isEmpty}");
+       debugPrint("querySnapshots ${querySnapshots.docs.length}");
+       debugPrint("querySnapshots ${querySnapshots.docs.isEmpty}");
        if(querySnapshots.docs.isEmpty){
-         print("querySnapshots.docs.isEmpty");
-         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => RegisterScreen(phoneNumber: phoneNumber)));
+         debugPrint("querySnapshots.docs.isEmpty");
+         navigatorKey.currentState!.pushReplacement(MaterialPageRoute(builder: (context) => RegisterScreen(phoneNumber: phoneNumber)));
          notifyListeners();
        }else {
          for (var snapshot in querySnapshots.docChanges) {
-           print("for loop querySnapshots");
+           debugPrint("for loop querySnapshots");
            // debugPrint('Collection length ${querySnapshots.docs.length}');
            if (querySnapshots.docs.isEmpty) {
-             print("querySnapshots.docs.isEmpty");
-             Navigator.of(context).pushReplacement(MaterialPageRoute(
-                 builder: (context) =>
-                     RegisterScreen(phoneNumber: phoneNumber)));
+             debugPrint("querySnapshots.docs.isEmpty");
+             navigatorKey.currentState!.pushReplacement(MaterialPageRoute(builder: (context) => RegisterScreen(phoneNumber: phoneNumber)));
              notifyListeners();
            } else {
              if (snapshot.doc.get('userMobile') == phoneNumber) {
-               print("else if querySnapshots.docs.isEmpty");
+               debugPrint("else if querySnapshots.docs.isEmpty");
                //print('If Inside =>>>>${snapshot.doc.get('userMobile')} == $phoneNumber');
                AppUtils.instance.setPref(
                    PreferenceKey.boolKey, PreferenceKey.prefLogin, true);
                AppUtils.instance.setPref(
                    PreferenceKey.stringKey, PreferenceKey.prefPhone, userPhone);
                getSharedPreferenceData(userPhone);
-               Navigator.of(context).pushAndRemoveUntil(
-                   MaterialPageRoute(
-                       builder: (BuildContext context) =>
-                       const BottomNavBarScreen()),
-                       (Route<dynamic> route) => false);
+               navigatorKey.currentState!.pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => const BottomNavBarScreen()), (Route<dynamic> route) => false);
                //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const BottomNavBarScreen()));
                notifyListeners();
                break;
              } else {
-               print("else else querySnapshots.docs.isEmpty");
+               debugPrint("else else querySnapshots.docs.isEmpty");
                //print('Else Inside =======> ${snapshot.doc.get('userMobile')} == $phoneNumber');
-               Navigator.of(context).pushReplacement(MaterialPageRoute(
-                   builder: (context) =>
-                       RegisterScreen(phoneNumber: phoneNumber)));
+               navigatorKey.currentState!.pushReplacement(MaterialPageRoute(builder: (context) => RegisterScreen(phoneNumber: phoneNumber)));
                notifyListeners();
              }
            }
-           print("abcxyz");
-           print("userPhone $userPhone");
+           debugPrint("abc xyz");
+           debugPrint("userPhone $userPhone");
            //print('OutSide ========>>>>>>>${snapshot.doc.get('userMobile')} == $phoneNumber');
            // debugPrint('userPhone $userPhone');
          }
        }
     }).catchError((error) {
-      print("error $error");
+      debugPrint("error $error");
       Provider.of<LoadingProvider>(context,listen: false).stopLoading();
       notifyListeners();
       AppUtils.instance.showToast(toastMessage: "Invalid OTP!");

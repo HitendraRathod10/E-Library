@@ -8,9 +8,8 @@ import '../../mixin/textfield_mixin.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_utils.dart';
 import '../../widget/bottom_navigation_bar.dart';
-import '../../widget/provider/loading-provider.dart';
 import '../provider/login_provider.dart';
-
+//ignore: must_be_immutable
 class RegisterScreen extends StatefulWidget with TextFieldMixin {
   String phoneNumber;
   RegisterScreen({Key? key,required this.phoneNumber}) : super(key: key);

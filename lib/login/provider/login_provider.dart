@@ -60,18 +60,18 @@ class LoginProvider extends ChangeNotifier{
       "userImage": userImage.toString(),
       "timeStamp" : timestamp
     };
-    print('user data=> $data');
+    debugPrint('user data=> $data');
 
     FirebaseCollection().userCollection.get().then((querySnapshot) {
       for (var result in querySnapshot.docs) {
-        print("${result.data()}");
+        debugPrint("${result.data()}");
         userData.add(result.data());
       }
     });
     await documentReferencer
         .set(data)
-        .whenComplete(() => print("Added user Details"))
-        .catchError((e) => print(e));
+        .whenComplete(() => debugPrint("Added user Details"))
+        .catchError((e) => debugPrint(e));
   }
 
 }

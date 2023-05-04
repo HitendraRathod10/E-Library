@@ -1,4 +1,4 @@
-import 'package:ebook/widget/provider/loading-provider.dart';
+import 'package:ebook/widget/provider/loading_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +7,7 @@ import '../../utils/app_colors.dart';
 class Loading extends StatelessWidget {
   final Widget? child;
 
-  const Loading({this.child});
+  const Loading({super.key, this.child});
 
   @override
   Widget build(BuildContext context) {

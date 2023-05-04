@@ -1,5 +1,4 @@
 import 'package:ebook/login/firebaseauth/phone_sign_in_auth.dart';
-import 'package:ebook/login/screen/register_screen.dart';
 import 'package:ebook/mixin/textfield_mixin.dart';
 import 'package:ebook/utils/app_colors.dart';
 import 'package:ebook/utils/app_images.dart';
