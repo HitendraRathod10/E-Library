@@ -24,7 +24,6 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreen extends State<EditProfileScreen> {
-
   TextEditingController emailController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController mobileController = TextEditingController();
@@ -32,27 +31,37 @@ class _EditProfileScreen extends State<EditProfileScreen> {
 
   File? file;
   var url = '';
+  String docId = '';
 
   Future<File> imageSizeCompress(
-      {required File image,
-        quality = 100,
-        percentage = 10}) async {
-    var path = await FlutterNativeImage.compressImage(image.absolute.path,quality: 100,percentage: 60);
+      {required File image, quality = 100, percentage = 10}) async {
+    var path = await FlutterNativeImage.compressImage(image.absolute.path,
+        quality: 100, percentage: 60);
     return path;
   }
 
-  void selectImage(BuildContext context) async{
+  void selectImage(BuildContext context) async {
     //Pick Image File
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-        allowMultiple: false,
-        type: FileType.image
-    );
-    if(result == null) return;
+    FilePickerResult? result = await FilePicker.platform
+        .pickFiles(allowMultiple: false, type: FileType.image);
+    if (result == null) return;
     final filePath = result.files.single.path;
     File compressImage = await imageSizeCompress(image: File(filePath!));
-    setState((){
+    setState(() {
       file = compressImage;
     });
+  }
+
+  Future<void> removeProfileImage() async {
+    try {
+      await  FirebaseCollection().userCollection.doc(docId).update({
+        'userImage': '',
+      });
+      print('Profile image removed successfully.');
+    } catch (error) {
+      AppUtils.instance.showToast(toastMessage: "Failed to removing profile image.");
+      print('Error removing profile image: $error');
+    }
   }
 
   void uploadFile() async {
@@ -63,18 +72,20 @@ class _EditProfileScreen extends State<EditProfileScreen> {
     final destination = 'images/$fireauth';
     try {
       final ref = FirebaseStorage.instance.ref().child(destination);
-      UploadTask uploadsTask =  ref.putFile(file!);
+      UploadTask uploadsTask = ref.putFile(file!);
       final snapshot = await uploadsTask.whenComplete(() {});
       final imageUrl = await snapshot.ref.getDownloadURL().whenComplete(() {});
 
       AppUtils.instance.showToast(toastMessage: "Update Profile");
       if (!mounted) return;
-      Provider.of<LoginProvider>(context,listen: false).addEmployee(
+      Provider.of<LoginProvider>(context, listen: false).addEmployee(
           userEmail: emailController.text.trim(),
           userName: nameController.text.trim(),
-          userMobile: mobileController.text.trim(),userType: 'User',
-          timestamp: Timestamp.now(), userImage: imageUrl);
-      Provider.of<LoadingProvider>(context,listen: false).stopLoading();
+          userMobile: mobileController.text.trim(),
+          userType: 'User',
+          timestamp: Timestamp.now(),
+          userImage: imageUrl);
+      Provider.of<LoadingProvider>(context, listen: false).stopLoading();
       Navigator.pop(context);
       debugPrint("Image URL = $imageUrl");
     } catch (e) {
@@ -84,179 +95,284 @@ class _EditProfileScreen extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: AppColor.whiteColor,
       appBar: AppBar(
         title: const Text('Edit Profile'),
       ),
-      body: Consumer<InternetProvider>(builder: (context,internetSnapshot,_){
-        internetSnapshot.checkInternet().then((value) {
-        });
-        return internetSnapshot.isInternet?
-        SingleChildScrollView(
-          child: Form(
-            key: formKey,
-            child: StreamBuilder(
-                stream: FirebaseCollection().userCollection.doc(FirebaseCollection.currentUserId).snapshots(),
-                builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot<Object?>> snapshot) {
-                  if (snapshot.hasError) {
-                    return const Text("Something went wrong");
-                  }
-                  else if (!snapshot.hasData || !snapshot.data!.exists) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  else if(snapshot.requireData.exists) {
-                    Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
-                    return Column(
-                      children: [
-                        const SizedBox(height: 30,),
-                        Stack(
-                            clipBehavior: Clip.none,
-                            children : [
-                              GestureDetector(
-                                onTap: (){
-                                  selectImage(context);
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                        width: 2,
-                                        color: AppColor.appColor,
-                                      ),
-                                      borderRadius: BorderRadius.circular(100)
-                                  ),
-                                  child: ClipOval(
-                                    child: file == null ?
-                                    data['userImage'] == "" ? Container(
-                                      color: AppColor.appColor,
-                                      height: 80,width: 80,child: Center(
-                                      child: Text('${data['userName']?.substring(0,1).toUpperCase()}',
-                                          style: const TextStyle(color: AppColor.whiteColor,fontSize: 30)),
-                                    ),) :
-                                    Image.network(
-                                        '${data['userImage']}',
-                                        height: 80,
-                                        width: 80,
-                                        fit: BoxFit.fill) :
-                                    Image.file(
-                                      file!,
-                                      height: 80,width: 80,
-                                      fit: BoxFit.fill,),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                left: 60,
-                                top: 50,
-                                child: ClipOval(
-                                    child: Container(
-                                      height: 30,width: 30,
-                                      color:Colors.white,child: const Icon(Icons.camera_alt,color: AppColor.appColor,size: 22,),)),
-                              )
-                            ]
-                        ),
-
-                        Padding(
-                          padding: const EdgeInsets.only(left: 20,right: 20,top: 40),
-                          child: Column(
+      body: Consumer<InternetProvider>(builder: (context, internetSnapshot, _) {
+        internetSnapshot.checkInternet().then((value) {});
+        return internetSnapshot.isInternet
+            ? SingleChildScrollView(
+                child: Form(
+                  key: formKey,
+                  child: StreamBuilder(
+                      stream: FirebaseCollection()
+                          .userCollection
+                          .doc(FirebaseCollection.currentUserId)
+                          .snapshots(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<DocumentSnapshot<Object?>> snapshot) {
+                        if (snapshot.hasError) {
+                          return const Text("Something went wrong");
+                        } else if (!snapshot.hasData ||
+                            !snapshot.data!.exists) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else if (snapshot.requireData.exists) {
+                          Map<String, dynamic> data =
+                              snapshot.data!.data() as Map<String, dynamic>;
+                          docId = data['userMobile'];
+                          print("DOCCCID $docId");
+                          return Column(
                             children: [
-                              TextFieldMixin().textFieldWidget(
-                                hintText: 'Name',
-                                prefixIcon: const Icon(Icons.person,color: AppColor.darkGreen,),
-                                labelStyle: TextStyle(color: AppColor.blackColor.withOpacity(0.5)),
-                                border: InputBorder.none,
-                                keyboardType: TextInputType.text,
-                                controller: nameController..text = data['userName'],
-                                validator: (value){
-                                  if(value!.isEmpty){
-                                    return 'Name is Required';
-                                  }
-                                  return null;
-                                },
+                              const SizedBox(
+                                height: 30,
                               ),
-                              const SizedBox(height: 20,),
-                              TextFieldMixin().textFieldWidget(
-                                hintText: 'Email',
-                                prefixIcon: const Icon(Icons.email,color: AppColor.darkGreen,),
-                                labelStyle: TextStyle(color: AppColor.blackColor.withOpacity(0.5)),
-                                border: InputBorder.none,
-                                keyboardType: TextInputType.emailAddress,
-                                controller: emailController..text = data['userEmail'],
-                                validator: (value){
-                                  if(value!.isEmpty){
-                                    return 'Email is Required';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              const SizedBox(height: 20,),
-                              TextFieldMixin().textFieldWidget(
-                                hintText: 'Mobile',
-                                prefixIcon: const Icon(Icons.phone_iphone,color: AppColor.darkGreen,),
-                                labelStyle: TextStyle(color: AppColor.blackColor.withOpacity(0.5)),
-                                border: InputBorder.none,
-                                keyboardType: TextInputType.phone,
-                                controller: mobileController..text = data['userMobile'],
-                                validator: (value){
-                                  if(value!.isEmpty){
-                                    return 'Mobile is Required';
-                                  }
-                                  return null;
-                                },
-                              ),
-
-                              const SizedBox(height: 50),
-                              Container(
-                                width: double.infinity,
-                                height: 45,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20)
-                                ),
-                                child: ElevatedButton(
-                                    onPressed: () {
-                                      if(formKey.currentState!.validate() ) {
-                                        Provider.of<LoadingProvider>(context,listen: false).startLoading();
-                                        if(file != null){
-                                          uploadFile();
-                                        } else{
-                                          AppUtils.instance.showToast(toastMessage: "Update Profile");
-                                          Provider.of<LoginProvider>(context,listen: false).addEmployee(
-                                              userEmail: emailController.text.trim(),
-                                              userName: nameController.text.trim(),
-                                              userMobile: mobileController.text.trim(),userType: data['userType'],
-                                              timestamp: Timestamp.now(), userImage: data['userImage']);
-                                          Provider.of<LoadingProvider>(context,listen: false).stopLoading();
-                                          Navigator.pop(context);
-                                        }
-                                      }
-                                    },
-                                    style: ButtonStyle(
-                                        backgroundColor: MaterialStateProperty.all<Color>(AppColor.darkGreen),
-                                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                            RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(10.0),
-                                            )
-                                        )
+                              Stack(clipBehavior: Clip.none, children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    selectImage(context);
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                          width: 2,
+                                          color: AppColor.appColor,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(100)),
+                                    child: ClipOval(
+                                      child: file == null
+                                          ? data['userImage'] == ""
+                                              ? Container(
+                                                  color: AppColor.appColor,
+                                                  height: 80,
+                                                  width: 80,
+                                                  child: Center(
+                                                    child: Text(
+                                                        '${data['userName']?.substring(0, 1).toUpperCase()}',
+                                                        style: const TextStyle(
+                                                            color: AppColor
+                                                                .whiteColor,
+                                                            fontSize: 30)),
+                                                  ),
+                                                )
+                                              : Image.network(
+                                                  '${data['userImage']}',
+                                                  height: 80,
+                                                  width: 80,
+                                                  fit: BoxFit.fill)
+                                          : Image.file(
+                                              file!,
+                                              height: 80,
+                                              width: 80,
+                                              fit: BoxFit.fill,
+                                            ),
                                     ),
-                                    child: const Text('Update',)
+                                  ),
+                                ),
+                                Positioned(
+                                  left: 60,
+                                  top: 50,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      selectImage(context);
+                                    },
+                                    child: ClipOval(
+                                        child: Container(
+                                      height: 30,
+                                      width: 30,
+                                      color: Colors.white,
+                                      child: const Icon(
+                                        Icons.camera_alt,
+                                        color: AppColor.appColor,
+                                        size: 22,
+                                      ),
+                                    )),
+                                  ),
+                                )
+                              ]),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              data['userImage'] == ""
+                                  ? const SizedBox()
+                                  : Container(
+                                      width:MediaQuery.of(context).size.width*0.9,
+                                      height: 43,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      child: ElevatedButton(
+                                          onPressed: () {
+                                            removeProfileImage();
+                                          },
+                                          style: ButtonStyle(
+                                              backgroundColor:
+                                                  MaterialStateProperty.all<
+                                                          Color>(
+                                                      AppColor.darkGreen),
+                                              shape: MaterialStateProperty.all<
+                                                      RoundedRectangleBorder>(
+                                                  RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10.0),
+                                              ))),
+                                          child: const Text(
+                                            'Remove Profile Image',
+                                          )),
+                                    ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 20, right: 20, top: 20),
+                                child: Column(
+                                  children: [
+                                    TextFieldMixin().textFieldWidget(
+                                      hintText: 'Name',
+                                      prefixIcon: const Icon(
+                                        Icons.person,
+                                        color: AppColor.darkGreen,
+                                      ),
+                                      labelStyle: TextStyle(
+                                          color: AppColor.blackColor
+                                              .withOpacity(0.5)),
+                                      border: InputBorder.none,
+                                      keyboardType: TextInputType.text,
+                                      controller: nameController
+                                        ..text = data['userName'],
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return 'Name is Required';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                    TextFieldMixin().textFieldWidget(
+                                      hintText: 'Email',
+                                      prefixIcon: const Icon(
+                                        Icons.email,
+                                        color: AppColor.darkGreen,
+                                      ),
+                                      labelStyle: TextStyle(
+                                          color: AppColor.blackColor
+                                              .withOpacity(0.5)),
+                                      border: InputBorder.none,
+                                      keyboardType: TextInputType.emailAddress,
+                                      controller: emailController
+                                        ..text = data['userEmail'],
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return 'Email is Required';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                    TextFieldMixin().textFieldWidget(
+                                      hintText: 'Mobile',
+                                      prefixIcon: const Icon(
+                                        Icons.phone_iphone,
+                                        color: AppColor.darkGreen,
+                                      ),
+                                      labelStyle: TextStyle(
+                                          color: AppColor.blackColor
+                                              .withOpacity(0.5)),
+                                      border: InputBorder.none,
+                                      keyboardType: TextInputType.phone,
+                                      controller: mobileController
+                                        ..text = data['userMobile'],
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return 'Mobile is Required';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    const SizedBox(height: 50),
+                                    Container(
+                                      width: double.infinity,
+                                      height: 45,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      child: ElevatedButton(
+                                          onPressed: () {
+                                            if (formKey.currentState!
+                                                .validate()) {
+                                              Provider.of<LoadingProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .startLoading();
+                                              if (file != null) {
+                                                uploadFile();
+                                              } else {
+                                                AppUtils.instance.showToast(
+                                                    toastMessage:
+                                                        "Update Profile");
+                                                Provider.of<LoginProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .addEmployee(
+                                                        userEmail:
+                                                            emailController
+                                                                .text
+                                                                .trim(),
+                                                        userName: nameController
+                                                            .text
+                                                            .trim(),
+                                                        userMobile:
+                                                            mobileController
+                                                                .text
+                                                                .trim(),
+                                                        userType:
+                                                            data['userType'],
+                                                        timestamp:
+                                                            Timestamp.now(),
+                                                        userImage:
+                                                            data['userImage']);
+                                                Provider.of<LoadingProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .stopLoading();
+                                                Navigator.pop(context);
+                                              }
+                                            }
+                                          },
+                                          style: ButtonStyle(
+                                              backgroundColor:
+                                                  MaterialStateProperty.all<
+                                                          Color>(
+                                                      AppColor.darkGreen),
+                                              shape: MaterialStateProperty.all<
+                                                      RoundedRectangleBorder>(
+                                                  RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10.0),
+                                              ))),
+                                          child: const Text(
+                                            'Update',
+                                          )),
+                                    )
+                                  ],
                                 ),
                               )
                             ],
-                          ),
-                        )
-                      ],
-                    );
-                  }
-                  else{
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                }
-            ),
-          ),
-        ) : noInternetDialog();
-      }
-      ),
+                          );
+                        } else {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                      }),
+                ),
+              )
+            : noInternetDialog();
+      }),
     );
   }
 }

@@ -1,7 +1,9 @@
 import 'package:ebook/login/screen/otp_screen.dart';
+import 'package:ebook/utils/app_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../firebase/firebase_collection.dart';
 import '../../main.dart';
 import '../../utils/app_preference_key.dart';
@@ -43,10 +45,14 @@ class MobileAuthProvider extends ChangeNotifier {
             });
           },
           verificationFailed: (FirebaseAuthException exception) {
-            debugPrint(exception.message);
+            debugPrint("Failed>>> ${exception.message} : Code >>> ${exception.code} ");
             if (exception.code == 'invalid-phone-number') {
               Provider.of<LoadingProvider>(context,listen: false).stopLoading();
               AppUtils.instance.showToast(toastMessage: "Phone number is not valid.");
+              notifyListeners();
+            } if (exception.code == '17010' || exception.message == "We have blocked all requests from this device due to unusual activity.") {
+              Provider.of<LoadingProvider>(context,listen: false).stopLoading();
+              AppUtils.instance.showToast(toastMessage: "SMS verification code request failed\nTry again later");
               notifyListeners();
             }
           },
@@ -59,7 +65,7 @@ class MobileAuthProvider extends ChangeNotifier {
           timeout: const Duration(seconds: 90),
           codeAutoRetrievalTimeout: (String verificationID) {});
     } catch (e) {
-      //Provider.of<LoadingProvider>(context,listen: false).stopLoading();
+      AppUtils.instance.showToast(toastMessage: "SMS verification code request failed\nTry again later");
       debugPrint("catch block");
       notifyListeners();
     }
@@ -68,6 +74,7 @@ class MobileAuthProvider extends ChangeNotifier {
 
   userPhoneVerify(BuildContext context,value,verification,phoneNumber)async{
     Provider.of<LoadingProvider>(context,listen: false).startLoading();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: verification, smsCode: value.toString());
     await auth.signInWithCredential(credential).then((value) async {
@@ -83,6 +90,7 @@ class MobileAuthProvider extends ChangeNotifier {
        if(querySnapshots.docs.isEmpty){
          debugPrint("querySnapshots.docs.isEmpty");
          navigatorKey.currentState!.pushReplacement(MaterialPageRoute(builder: (context) => RegisterScreen(phoneNumber: phoneNumber)));
+         
          notifyListeners();
        }else {
          for (var snapshot in querySnapshots.docChanges) {
@@ -96,12 +104,11 @@ class MobileAuthProvider extends ChangeNotifier {
              if (snapshot.doc.get('userMobile') == phoneNumber) {
                debugPrint("else if querySnapshots.docs.isEmpty");
                //print('If Inside =>>>>${snapshot.doc.get('userMobile')} == $phoneNumber');
-               AppUtils.instance.setPref(
-                   PreferenceKey.boolKey, PreferenceKey.prefLogin, true);
-               AppUtils.instance.setPref(
-                   PreferenceKey.stringKey, PreferenceKey.prefPhone, userPhone);
+               AppUtils.instance.setPref(PreferenceKey.boolKey, PreferenceKey.prefLogin, true);
+               AppUtils.instance.setPref(PreferenceKey.stringKey, PreferenceKey.prefPhone, userPhone);
                getSharedPreferenceData(userPhone);
                navigatorKey.currentState!.pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => const BottomNavBarScreen()), (Route<dynamic> route) => false);
+
                //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const BottomNavBarScreen()));
                notifyListeners();
                break;

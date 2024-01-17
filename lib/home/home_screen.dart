@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ebook/full_screen.dart';
 import 'package:ebook/home/provider/internet_provider.dart';
 import 'package:ebook/home/screen/no_internet_screen.dart';
 import 'package:ebook/home/screen/popular_author_screen.dart';
@@ -80,11 +81,16 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: Text('${data['userName']?.substring(0,1).toUpperCase()}',
                                   style: const TextStyle(color: AppColor.whiteColor)),
                             ),) :
-                            Image.network(
-                                '${data['userImage']}',
-                                height: 50,
-                                width: 40,
-                                fit: BoxFit.fill)
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => FullScreenImage(imageUrl: data['userImage']),));
+                              },
+                              child: Image.network(
+                                  '${data['userImage']}',
+                                  height: 50,
+                                  width: 40,
+                                  fit: BoxFit.fill),
+                            )
                         ),
                       );
                     } else{

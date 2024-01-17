@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ebook/full_screen.dart';
 import 'package:ebook/home/screen/no_internet_screen.dart';
 import 'package:ebook/utils/app_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,6 +9,7 @@ import '../firebase/firebase_collection.dart';
 import '../home/provider/internet_provider.dart';
 import '../login/screen/login_screen.dart';
 import '../mixin/textfield_mixin.dart';
+import '../utils/app_preference_key.dart';
 import '../utils/app_utils.dart';
 import 'edit_profile_screen.dart';
 
@@ -62,11 +64,16 @@ class Profile extends StatelessWidget {
                                           child: Text('${data['userName']?.substring(0,1).toUpperCase()}',
                                               style: const TextStyle(color: AppColor.darkGreen,fontSize: 30)),
                                         ),) :
-                                        Image.network(
-                                            '${data['userImage']}',
-                                            height: 80,
-                                            width: 80,
-                                            fit: BoxFit.fill)
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => FullScreenImage(imageUrl: data['userImage']),));
+                                          },
+                                          child: Image.network(
+                                              '${data['userImage']}',
+                                              height: 80,
+                                              width: 80,
+                                              fit: BoxFit.fill),
+                                        )
                                     ),
                                   ),
                                 ],
@@ -132,7 +139,10 @@ class Profile extends StatelessWidget {
                                 ),
                                 child: ElevatedButton(
                                     onPressed: () {
-                                      FirebaseAuth.instance.signOut();
+                                      FirebaseAuth.instance.signOut().then((_) {
+                                        AppUtils.instance.setPref(PreferenceKey.boolKey, PreferenceKey.prefLogin, false);
+                                      });
+
                                       AppUtils.instance.clearPref().then((value) => Navigator.pushReplacement(context,
                                           MaterialPageRoute(builder: (context) =>  const LoginScreen())));
                                     },

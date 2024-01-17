@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:ebook/login/firebaseauth/phone_sign_in_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../mixin/textfield_mixin.dart';
 import '../../utils/app_colors.dart';
+import '../../utils/app_preference_key.dart';
 import '../../utils/app_utils.dart';
 import '../../widget/bottom_navigation_bar.dart';
 import '../provider/login_provider.dart';
@@ -107,9 +109,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 Positioned(
                                   left: 50,
                                   top: 50,
-                                  child: ClipOval(child: Container(
-                                    height: 30,width: 30,
-                                    color:AppColor.whiteColor,child: const Icon(Icons.camera_alt,color: AppColor.appColor,size: 22),)),
+                                  child: GestureDetector(
+                                    onTap: () => snapshot.selectImage(context),
+                                    child: ClipOval(child: Container(
+                                      height: 30,width: 30,
+                                      color:AppColor.whiteColor,child: const Icon(Icons.camera_alt,color: AppColor.appColor,size: 22),)),
+                                  ),
                                 )
                               ]
                           ),
@@ -162,12 +167,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           },
                         ),
                         const SizedBox(height: 20),
-                        DropdownButtonFormField(
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
+                        DropdownButtonFormField2(
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(vertical: 20),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          buttonStyleData: const ButtonStyleData(
+                            padding: EdgeInsets.only(right: 10),
+                          ),
+                          dropdownStyleData: DropdownStyleData(
+                              padding: EdgeInsets.zero,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
                               ),
+                              maxHeight: 200,
+                              useSafeArea: true,
+                              isOverButton: false,
+                              offset: const Offset(0, -20)
+                          ),
+                          iconStyleData: const IconStyleData(
+                              icon: Icon(Icons.arrow_drop_down)),
+                          barrierDismissible: false,
+                          autofocus: true,
+                          isExpanded: true,
                               value: snapshot.selectUserType,
                               validator: (value) {
                                 if (value == null) {
@@ -176,10 +200,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 return null;
                               },
                               hint: const Text('Select User Type'),
-                              isExpanded: true,
                               isDense: true,
                               style: const TextStyle(color: AppColor.appBlackColor, fontSize: 14),
-                              icon: const Icon(Icons.arrow_drop_down),
                               onChanged: (String? newValue) {
                                 snapshot.selectUserType = newValue!;
                                 snapshot.getUserType;
@@ -204,7 +226,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               borderRadius: BorderRadius.circular(20)
                           ),
                           child: ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 if(_formKey.currentState!.validate()){
                                   //Provider.of<LoadingProvider>(context,listen: false).startLoading();
                                   if(snapshot.file !=null){
@@ -217,9 +239,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         userEmail: emailController.text.toString(),
                                         userMobile: mobileController.text.toString(),
                                         userType: Provider.of<LoginProvider>(context,listen: false).selectUserType.toString(),
-                                        userImage: '', timestamp: Timestamp.now());
+                                        userImage: '', timestamp: Timestamp.now()).then((value) {
+                                      AppUtils.instance.setPref(PreferenceKey.boolKey, PreferenceKey.prefLogin, true);
+                                    });
                                     Provider.of<MobileAuthProvider>(context,listen: false).getSharedPreferenceData(widget.phoneNumber);
-                                    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const BottomNavBarScreen()));
+                                    // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const BottomNavBarScreen()));
+                                    Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                        builder: (context) => const BottomNavBarScreen(),
+                                      ),
+                                          (route) => false,
+                                    );
+
                                   }
                                 }
                               },

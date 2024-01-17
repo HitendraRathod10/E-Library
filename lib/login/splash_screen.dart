@@ -16,30 +16,32 @@ class SplashScreen extends StatefulWidget {
 
 class SplashScreenState extends State<SplashScreen>{
 
-  bool isUserLogin=false;
+  var isUserLogin;
   String? email;
 
-  getPreferenceData()async{
-    isUserLogin= await AppUtils.instance.getPreferenceValueViaKey(PreferenceKey.prefLogin)??false;
-    email=await AppUtils.instance.getPreferenceValueViaKey(PreferenceKey.prefPhone)?? "";
-    setState(() {});
-    Timer(
-        const Duration(seconds: 3), (){
-          if(isUserLogin){
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) =>  const BottomNavBarScreen()));
-          } else{
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) =>  const LoginScreen()));
-          }
-      });
-  }
 
 
   @override
   void initState() {
-    super.initState();
     getPreferenceData();
+    super.initState();
+  }
+
+  getPreferenceData()async{
+    isUserLogin= await AppUtils.instance.getPreferenceValueViaKey(PreferenceKey.prefLogin)??false;
+    email=await AppUtils.instance.getPreferenceValueViaKey(PreferenceKey.prefPhone)?? "";
+    print("isUserLogin $isUserLogin $email");
+    setState(() {});
+    Timer(
+        const Duration(seconds: 3), (){
+      if(isUserLogin){
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) =>  const BottomNavBarScreen()));
+      } else{
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) =>  const LoginScreen()));
+      }
+    });
   }
 
   @override
