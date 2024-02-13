@@ -22,7 +22,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   // String bookName = '';
   //
   // getBookData() async{
@@ -37,73 +36,98 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<InternetProvider>(context, listen: false).checkInternet().then((value) {});
+    Provider.of<InternetProvider>(context, listen: false)
+        .checkInternet()
+        .then((value) {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return  Consumer<InternetProvider>(builder: (context,internetSnapshot,_){
-      internetSnapshot.checkInternet().then((value) {
-      });
+    return Consumer<InternetProvider>(builder: (context, internetSnapshot, _) {
+      internetSnapshot.checkInternet().then((value) {});
       //print(todayReadingSnapshot.checkTodayData());
       debugPrint("abcd ${internetSnapshot.isInternet}");
-      return internetSnapshot.isInternet?
-         Scaffold(
-          backgroundColor: AppColor.whiteColor,
-          appBar: AppBar(
-            title: const Text('E-Library'),
-            actions:  [
-              StreamBuilder(
-                  stream: FirebaseCollection().userCollection.doc(FirebaseCollection.currentUserId).snapshots(),
-                  builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot<Object?>> snapshot) {
-                    if (!snapshot.hasData || !snapshot.data!.exists || snapshot.hasError) {
-                    return Shimmer.fromColors(
-                      highlightColor: Colors.white,
-                      baseColor: Colors.grey.shade100,
-                      child: ClipOval(
-                        child: Image.asset(
-                            AppImage.novel,
-                            height: 50,
-                            width: 40,
-                            fit: BoxFit.fill),
-                      ),
-                    );
-                    } else if(snapshot.requireData.exists){
-                      Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 15,top: 8,bottom: 8),
-                        child:
-                        ClipOval(
-                            child:
-                            data['userImage'] == "" ? Container(
-                              color: AppColor.darkGreen,
-                              height: 50,width: 40,child: Center(
-                              child: Text('${data['userName']?.substring(0,1).toUpperCase()}',
-                                  style: const TextStyle(color: AppColor.whiteColor)),
-                            ),) :
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => FullScreenImage(imageUrl: data['userImage']),));
-                              },
-                              child: Image.network(
-                                  '${data['userImage']}',
-                                  height: 50,
-                                  width: 40,
-                                  fit: BoxFit.fill),
-                            )
-                        ),
-                      );
-                    } else{
-                      return const CircularProgressIndicator();
-                    }
-                }
-              )
-            ],
-          ),
-          //drawer: const DrawerScreen(),
-          body: SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
+      return internetSnapshot.isInternet
+          ? Scaffold(
+              backgroundColor: AppColor.whiteColor,
+              appBar: AppBar(
+                title: const Text('E-Library'),
+                actions: [
+                  StreamBuilder(
+                      stream: FirebaseCollection()
+                          .userCollection
+                          .doc(FirebaseCollection.currentUserId)
+                          .snapshots(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<DocumentSnapshot<Object?>> snapshot) {
+                        if (!snapshot.hasData ||
+                            !snapshot.data!.exists ||
+                            snapshot.hasError) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 15, top: 8, bottom: 8),
+                            child: Shimmer.fromColors(
+                              highlightColor: Colors.white,
+                              baseColor: Colors.grey.shade100,
+                              child: ClipOval(
+                                child: Image.asset(AppImage.novel,
+                                    height: 50, width: 40, fit: BoxFit.fill),
+                              ),
+                            ),
+                          );
+                        } else if (snapshot.requireData.exists) {
+                          Map<String, dynamic> data =
+                              snapshot.data!.data() as Map<String, dynamic>;
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                                right: 15, top: 8, bottom: 8),
+                            child: ClipOval(
+                                child: data['userImage'] == ""
+                                    ? Container(
+                                        color: AppColor.darkGreen,
+                                        height: 50,
+                                        width: 40,
+                                        child: Center(
+                                          child: Text(
+                                              '${data['userName']?.substring(0, 1).toUpperCase()}',
+                                              style: const TextStyle(
+                                                  color: AppColor.whiteColor,fontSize: 20,fontWeight: FontWeight.w500)),
+                                        ),
+                                      )
+                                    : GestureDetector(
+                                        onTap: () {
+                                          Navigator.of(context)
+                                              .push(MaterialPageRoute(
+                                            builder: (context) =>
+                                                FullScreenImage(
+                                                    imageUrl:
+                                                        data['userImage']),
+                                          ));
+                                        },
+                                        child: Container(
+                                          height: 50,
+                                          width: 50,
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                  color:Colors.orange,
+                                                  width: 1.5),
+                                              image: DecorationImage(
+                                                  image: NetworkImage(
+                                                      "${data['userImage']}"),
+                                                  fit: BoxFit.cover)),
+                                        ),
+                                      )),
+                          );
+                        } else {
+                          return const CircularProgressIndicator();
+                        }
+                      })
+                ],
+              ),
+              //drawer: const DrawerScreen(),
+              body: SafeArea(
+                child: SingleChildScrollView(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SliderWidget(),
@@ -117,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               TextSpan(
                                   text: "Author",
                                   style: TextStyle(
-                                      color: AppColor.darkGreen,
+                                    color: AppColor.darkGreen,
                                     fontSize: 20,
                                     fontWeight: FontWeight.w500,
                                   ))
@@ -127,19 +151,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 10),
                       StreamBuilder(
-                          stream: FirebaseCollection().authorCollection.snapshots(),
-                          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
-                            if(snapshot.connectionState == ConnectionState.waiting){
+                          stream:
+                              FirebaseCollection().authorCollection.snapshots(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
                               return const PopularAuthorShimmers();
-                            }else if (snapshot.hasError) {
-                              return const Center(child: Text("Something went wrong"));
-                            }
-                            else if (!snapshot.hasData) {
+                            } else if (snapshot.hasError) {
+                              return const Center(
+                                  child: Text("Something went wrong"));
+                            } else if (!snapshot.hasData) {
                               return const Center(child: Text("No Data Found"));
-                            } else if (snapshot.requireData.docChanges.isEmpty){
+                            } else if (snapshot
+                                .requireData.docChanges.isEmpty) {
                               return const Center(child: Text("No Data Found"));
-                            }
-                            else{
+                            } else {
                               return Container(
                                 height: 100,
                                 margin: const EdgeInsets.only(left: 10),
@@ -148,8 +175,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                     scrollDirection: Axis.horizontal,
                                     itemBuilder: (context, index) {
                                       return GestureDetector(
-                                        onTap: (){
-                                          Navigator.push(context, MaterialPageRoute(builder: (context)=> PopularAuthorScreen(snapShotData: snapshot.data?.docs[index],)));
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      PopularAuthorScreen(
+                                                        snapShotData: snapshot
+                                                            .data?.docs[index],
+                                                      )));
                                         },
                                         child: SizedBox(
                                           width: 80,
@@ -157,37 +191,53 @@ class _HomeScreenState extends State<HomeScreen> {
                                           child: Column(
                                             children: [
                                               ClipOval(
-                                                child: Image.network(snapshot.data?.docs[index]['authorImage'],
-                                                  height: 60,width: 60,fit: BoxFit.fill,
+                                                child: Image.network(
+                                                  snapshot.data?.docs[index]
+                                                      ['authorImage'],
+                                                  height: 60,
+                                                  width: 60,
+                                                  fit: BoxFit.fill,
                                                 ),
                                               ),
-                                              const SizedBox(height: 5,),
-                                              Text(snapshot.data?.docs[index]['authorName'],
-                                                style: const TextStyle(fontSize: 12),
-                                                textAlign: TextAlign.center,maxLines: 2,overflow: TextOverflow.ellipsis,)
+                                              const SizedBox(
+                                                height: 5,
+                                              ),
+                                              Text(
+                                                snapshot.data?.docs[index]
+                                                    ['authorName'],
+                                                style: const TextStyle(
+                                                    fontSize: 12),
+                                                textAlign: TextAlign.center,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              )
                                             ],
                                           ),
                                         ),
                                       );
-                                    }
-                                ),
+                                    }),
                               );
                             }
-                        }
-                      ),
+                          }),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: RichText(
                           text: const TextSpan(
                             children: [
-                              TextSpan(text: "Continue ",
-                                  style: TextStyle(color: AppColor.darkGreyColor,fontWeight: FontWeight.w500,fontSize: 18)
-                              ),
+                              TextSpan(
+                                  text: "Continue ",
+                                  style: TextStyle(
+                                      color: AppColor.darkGreyColor,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 18)),
                               TextSpan(
                                   text: "reading...",
                                   style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColor.darkGreen
+                                      fontSize: 18,
+                                      // fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColor.darkGreyColor,
+                                      // color: AppColor.darkGreen
                                   ))
                             ],
                           ),
@@ -197,11 +247,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       const ContinueReadingWidget(),
                       const SizedBox(height: 10)
                     ],
+                  ),
+                ),
               ),
-            ),
-          ),
-        ) : noInternetDialog();
-      }
-    );
+            )
+          : noInternetDialog();
+    });
   }
 }

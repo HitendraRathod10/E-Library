@@ -22,6 +22,7 @@ class TextFieldMixin {
         String? initialValue,
       bool readOnly = false,
         String? hintText,
+        EdgeInsetsGeometry? contentPadding,
       InputBorder? focusedBorder,
       String? labelText,
       TextStyle? labelStyle}) {
@@ -39,6 +40,7 @@ class TextFieldMixin {
             hintText: hintText,
             counterText: counterText,
             prefixText: prefixText,
+            contentPadding: contentPadding,
             prefixIcon: prefixIcon
         ),
         readOnly: readOnly,

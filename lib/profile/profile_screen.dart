@@ -72,7 +72,7 @@ class Profile extends StatelessWidget {
                                               '${data['userImage']}',
                                               height: 80,
                                               width: 80,
-                                              fit: BoxFit.fill),
+                                              fit: BoxFit.cover),
                                         )
                                     ),
                                   ),

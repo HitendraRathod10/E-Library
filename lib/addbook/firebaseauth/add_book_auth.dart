@@ -10,6 +10,21 @@ class AddBookProvider extends ChangeNotifier{
   List<String> selectCountryList = ['India','USA','Russia','Australia','England'];
   List<String> selectBookGenreList = ['History','Horror Fiction','Novel','Action','Mystery',
   'Western','Science','Children','Magical','Drama','Crime','Poetry','Comic','Romance','Historical'];
+  Icon getCountryIcon(){
+    if(selectCountry== "India"){
+      return const Icon(Icons.currency_rupee);
+    }else if(selectCountry== "USA"){
+      return const Icon(Icons.attach_money);
+    }else if(selectCountry== "Russia"){
+      return const Icon(Icons.currency_ruble);
+    }else if(selectCountry== "Australia"){
+      return const Icon(Icons.euro);
+    }else if(selectCountry== "England"){
+      return const Icon(Icons.currency_pound);
+    }else{
+      return const Icon(Icons.currency_rupee);
+    }
+  }
 
   get getCountry {
     notifyListeners();

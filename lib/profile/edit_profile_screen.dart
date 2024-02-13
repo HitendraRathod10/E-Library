@@ -54,12 +54,13 @@ class _EditProfileScreen extends State<EditProfileScreen> {
 
   Future<void> removeProfileImage() async {
     try {
-      await  FirebaseCollection().userCollection.doc(docId).update({
+      await FirebaseCollection().userCollection.doc(docId).update({
         'userImage': '',
       });
       print('Profile image removed successfully.');
     } catch (error) {
-      AppUtils.instance.showToast(toastMessage: "Failed to removing profile image.");
+      AppUtils.instance
+          .showToast(toastMessage: "Failed to removing profile image.");
       print('Error removing profile image: $error');
     }
   }
@@ -162,12 +163,12 @@ class _EditProfileScreen extends State<EditProfileScreen> {
                                                   '${data['userImage']}',
                                                   height: 80,
                                                   width: 80,
-                                                  fit: BoxFit.fill)
+                                                  fit: BoxFit.cover)
                                           : Image.file(
                                               file!,
                                               height: 80,
                                               width: 80,
-                                              fit: BoxFit.fill,
+                                              fit: BoxFit.cover,
                                             ),
                                     ),
                                   ),
@@ -199,7 +200,8 @@ class _EditProfileScreen extends State<EditProfileScreen> {
                               data['userImage'] == ""
                                   ? const SizedBox()
                                   : Container(
-                                      width:MediaQuery.of(context).size.width*0.9,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.9,
                                       height: 43,
                                       decoration: BoxDecoration(
                                           borderRadius:
@@ -307,8 +309,7 @@ class _EditProfileScreen extends State<EditProfileScreen> {
                                                 .validate()) {
                                               Provider.of<LoadingProvider>(
                                                       context,
-                                                      listen: false)
-                                                  .startLoading();
+                                                      listen: false).startLoading();
                                               if (file != null) {
                                                 uploadFile();
                                               } else {

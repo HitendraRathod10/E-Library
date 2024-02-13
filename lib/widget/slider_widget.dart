@@ -10,7 +10,6 @@ class SliderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return StreamBuilder(
       stream: FirebaseCollection().bookCollection.
       orderBy('timeStamp',descending: true).snapshots(),
@@ -46,7 +45,7 @@ class SliderWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 21),
                   child: RichText(
                     text: const TextSpan(
                       children: [
@@ -56,8 +55,10 @@ class SliderWidget extends StatelessWidget {
                         TextSpan(
                             text: "Added",
                             style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: AppColor.darkGreen,
+                              // fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 20,
+                              color: AppColor.darkGreyColor/*AppColor.darkGreen*/,
                             ))
                       ],
                     ),

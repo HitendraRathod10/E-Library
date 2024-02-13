@@ -13,7 +13,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import '../home/provider/internet_provider.dart';
 import '../widget/bottom_navigation_bar.dart';
@@ -44,6 +43,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
   TextEditingController priceController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool checkBoxValue = false;
+  late AddBookProvider addBookProvider;
 
   void selectImage(context) async {
     //Pick Image File
@@ -173,13 +173,19 @@ class _AddBookScreenState extends State<AddBookScreen> {
       debugPrint('Failed to upload image');
     }
   }
+@override
+  void dispose() {
+    addBookProvider.selectCountry= null;
+    super.dispose();
+  }
 
   @override
   void initState() {
-    // TODO: implement initState
-    //Provider.of<AddBookProvider>(context).selectBookGenre = null;
+    addBookProvider = Provider.of<AddBookProvider>(context, listen: false) ;
     super.initState();
   }
+
+  // Icon countryIcon = getCountryIcon(country);
 
   @override
   Widget build(BuildContext context) {
@@ -217,7 +223,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
                               return null;
                             },
                           ),
-
                           const SizedBox(
                             height: 20,
                           ),
@@ -234,7 +239,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
                               return null;
                             },
                           ),
-
                           const SizedBox(
                             height: 20,
                           ),
@@ -315,7 +319,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
                                 }
                                 return null;
                               }),
-
                           const SizedBox(
                             height: 20,
                           ),
@@ -335,7 +338,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
                               return null;
                             },
                           ),
-
                           const SizedBox(
                             height: 20,
                           ),
@@ -343,7 +345,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
                               (BuildContext context, snapshot, Widget? child) {
                             return DropdownButtonFormField2<String>(
                               decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(vertical: 20),
+                                contentPadding:
+                                    const EdgeInsets.symmetric(vertical: 20),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -352,18 +355,17 @@ class _AddBookScreenState extends State<AddBookScreen> {
                                 padding: EdgeInsets.only(right: 10),
                               ),
                               dropdownStyleData: DropdownStyleData(
-                                padding: EdgeInsets.zero,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                maxHeight: 200,
-                                useSafeArea: true,
+                                  padding: EdgeInsets.zero,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  maxHeight: 200,
+                                  useSafeArea: true,
                                   isOverButton: false,
-                                offset: const Offset(0, -20)
-                              ),
+                                  offset: const Offset(0, -20)),
                               iconStyleData: const IconStyleData(
                                   icon: Icon(Icons.arrow_drop_down)),
-                              barrierDismissible: false,
+                              barrierDismissible: true ,
                               autofocus: true,
                               isExpanded: true,
                               value: snapshot.selectCountry,
@@ -377,8 +379,14 @@ class _AddBookScreenState extends State<AddBookScreen> {
                               style: const TextStyle(
                                   color: AppColor.appBlackColor, fontSize: 14),
                               onChanged: (String? newValue) {
-                                snapshot.selectCountry = newValue!;
-                                snapshot.getCountry;
+                                setState(() {
+                                  if (mounted) {
+                                    snapshot.selectCountry = newValue!;
+                                    snapshot.getCountry;
+                                  }
+                                });
+                                print(
+                                    "Country ${snapshot.selectCountry} $newValue");
                               },
                               items: snapshot.selectCountryList
                                   .map((item) => DropdownMenuItem<String>(
@@ -397,7 +405,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
                               (BuildContext context, snapshot, Widget? child) {
                             return DropdownButtonFormField2(
                               decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(vertical: 20),
+                                contentPadding:
+                                    const EdgeInsets.symmetric(vertical: 20),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -413,8 +422,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                                   maxHeight: 200,
                                   useSafeArea: true,
                                   isOverButton: false,
-                                  offset: const Offset(0, -20)
-                              ),
+                                  offset: const Offset(0, -20)),
                               iconStyleData: const IconStyleData(
                                   icon: Icon(Icons.arrow_drop_down)),
                               barrierDismissible: false,
@@ -439,12 +447,10 @@ class _AddBookScreenState extends State<AddBookScreen> {
                                   .map<DropdownMenuItem<String>>(
                                       (String leaveName) {
                                 return DropdownMenuItem<String>(
-                                    value: leaveName,
-                                    child: Text(leaveName));
+                                    value: leaveName, child: Text(leaveName));
                               }).toList(),
                             );
                           }),
-
                           const SizedBox(
                             height: 20,
                           ),
@@ -462,13 +468,17 @@ class _AddBookScreenState extends State<AddBookScreen> {
                               return null;
                             },
                           ),
-
                           const SizedBox(
                             height: 20,
                           ),
                           TextFieldMixin().textFieldWidget(
-                            labelText: "Price",
+                            hintText: "Price",
                             controller: priceController,
+                            prefixIcon:addBookProvider.selectCountry== null?null:Padding(
+                              padding: const EdgeInsets.only(right: 10),
+                              child: addBookProvider.getCountryIcon(),
+                            ),
+                            contentPadding:addBookProvider.selectCountry== null?const EdgeInsets.symmetric(vertical: 10): const EdgeInsets.only(top: 15),
                             keyboardType: TextInputType.number,
                             border: InputBorder.none,
                             validator: (value) {
@@ -480,7 +490,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
                               return null;
                             },
                           ),
-
                           const SizedBox(
                             height: 20,
                           ),
@@ -602,14 +611,18 @@ class _AddBookScreenState extends State<AddBookScreen> {
                                       pdfFile != null &&
                                       file != null &&
                                       (checkBoxValue == true
-                                          ? (authorImageFile != null && authorImageFile!.path.isNotEmpty)
+                                          ? (authorImageFile != null &&
+                                              authorImageFile!.path.isNotEmpty)
                                           : true)) {
                                     uploadFile(context);
+                                    addBookProvider.selectCountry = '';
+                                    setState(() {});
                                   } else {
                                     if (file == null && pdfFile == null) {
-                                      toastMessage = "Select Image And Book To Proceed.";
+                                      toastMessage =
+                                          "Select Image And Book To Proceed.";
                                     } else {
-                                      if (pdfFile == null ) {
+                                      if (pdfFile == null) {
                                         toastMessage += ' Select Book. ';
                                       }
 
@@ -617,9 +630,13 @@ class _AddBookScreenState extends State<AddBookScreen> {
                                         toastMessage += ' Select Book Image. ';
                                       }
 
-                                      if (checkBoxValue == true && pdfFile != null && file != null) {
-                                        if (authorImageFile == null || authorImageFile!.path.isEmpty) {
-                                          toastMessage += ' Select Author Image. ';
+                                      if (checkBoxValue == true &&
+                                          pdfFile != null &&
+                                          file != null) {
+                                        if (authorImageFile == null ||
+                                            authorImageFile!.path.isEmpty) {
+                                          toastMessage +=
+                                              ' Select Author Image. ';
                                         }
                                       }
                                     }
@@ -631,10 +648,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
                                     }
                                   }
                                 },
-
-
-
-
                                 style: ButtonStyle(
                                     backgroundColor:
                                         MaterialStateProperty.all<Color>(
