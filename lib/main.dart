@@ -8,11 +8,13 @@ import 'package:ebook/widget/loading_screen.dart';
 import 'package:ebook/widget/provider/loading_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'login/firebaseauth/phone_sign_in_auth.dart';
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   await Firebase.initializeApp(
      // options: FirebaseOptions(
      //     apiKey: "AIzaSyA4dSktEQqWllJyGd_neNwo9H3K3_z3IRc",
