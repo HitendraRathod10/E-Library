@@ -8,11 +8,13 @@ import 'package:ebook/home/widget/today_reading_widget.dart';
 import 'package:ebook/utils/app_colors.dart';
 import 'package:ebook/utils/app_images.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import '../firebase/firebase_collection.dart';
 import '../shimmers/popular_author_shimmer.dart';
 import '../widget/slider_widget.dart';
+import '../../utils/ad_helper.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -32,13 +34,57 @@ class _HomeScreenState extends State<HomeScreen> {
   //     });
   //   }
   // }
+  InterstitialAd? interstitialAd;
 
   @override
   void initState() {
     super.initState();
     Provider.of<InternetProvider>(context, listen: false)
         .checkInternet()
-        .then((value) {});
+        .then((value) {
+      createInterstitialAd();
+    });
+  }
+
+  void createInterstitialAd() {
+    InterstitialAd.load(
+        adUnitId: AdHelper.interstitialAdUnitId,
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (InterstitialAd ad) {
+            print('$ad loaded');
+            interstitialAd = ad;
+            interstitialAd!.setImmersiveMode(true);
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            print('InterstitialAd failed to load: $error.');
+            interstitialAd = null;
+            createInterstitialAd();
+          },
+        ));
+  }
+
+  void showInterstitialAd() {
+    if (interstitialAd == null) {
+      print('Warning: attempt to show interstitial before loaded.');
+      return;
+    }
+    interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+      onAdShowedFullScreenContent: (InterstitialAd ad) =>
+          print('ad onAdShowedFullScreenContent.'),
+      onAdDismissedFullScreenContent: (InterstitialAd ad) {
+        print('$ad onAdDismissedFullScreenContent.');
+        ad.dispose();
+        createInterstitialAd();
+      },
+      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+        print('$ad onAdFailedToShowFullScreenContent: $error');
+        ad.dispose();
+        createInterstitialAd();
+      },
+    );
+    interstitialAd!.show();
+    interstitialAd = null;
   }
 
   @override
@@ -184,6 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         snapShotData: snapshot
                                                             .data?.docs[index],
                                                       )));
+                                          showInterstitialAd();
                                         },
                                         child: SizedBox(
                                           width: 80,
