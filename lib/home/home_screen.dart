@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import '../firebase/firebase_collection.dart';
 import '../shimmers/popular_author_shimmer.dart';
+import '../widget/provider/ads_provider.dart';
 import '../widget/slider_widget.dart';
 import '../../utils/ad_helper.dart';
 
@@ -34,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   //     });
   //   }
   // }
-  InterstitialAd? interstitialAd;
+
 
   @override
   void initState() {
@@ -42,50 +43,11 @@ class _HomeScreenState extends State<HomeScreen> {
     Provider.of<InternetProvider>(context, listen: false)
         .checkInternet()
         .then((value) {
-      createInterstitialAd();
+      Provider.of<AdsProvider>(context,listen: false).createInterstitialAd();
     });
   }
 
-  void createInterstitialAd() {
-    InterstitialAd.load(
-        adUnitId: AdHelper.interstitialAdUnitId,
-        request: const AdRequest(),
-        adLoadCallback: InterstitialAdLoadCallback(
-          onAdLoaded: (InterstitialAd ad) {
-            print('$ad loaded');
-            interstitialAd = ad;
-            interstitialAd!.setImmersiveMode(true);
-          },
-          onAdFailedToLoad: (LoadAdError error) {
-            print('InterstitialAd failed to load: $error.');
-            interstitialAd = null;
-            createInterstitialAd();
-          },
-        ));
-  }
 
-  void showInterstitialAd() {
-    if (interstitialAd == null) {
-      print('Warning: attempt to show interstitial before loaded.');
-      return;
-    }
-    interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: (InterstitialAd ad) =>
-          print('ad onAdShowedFullScreenContent.'),
-      onAdDismissedFullScreenContent: (InterstitialAd ad) {
-        print('$ad onAdDismissedFullScreenContent.');
-        ad.dispose();
-        createInterstitialAd();
-      },
-      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-        print('$ad onAdFailedToShowFullScreenContent: $error');
-        ad.dispose();
-        createInterstitialAd();
-      },
-    );
-    interstitialAd!.show();
-    interstitialAd = null;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -230,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         snapShotData: snapshot
                                                             .data?.docs[index],
                                                       )));
-                                          showInterstitialAd();
+                                          Provider.of<AdsProvider>(context,listen: false).showInterstitialAd();
                                         },
                                         child: SizedBox(
                                           width: 80,

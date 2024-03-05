@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ebook/addbook/firebaseauth/add_book_auth.dart';
 import 'package:ebook/home/screen/no_internet_screen.dart';
@@ -8,8 +10,10 @@ import 'package:ebook/utils/app_images.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import '../../firebase/firebase_collection.dart';
+import '../../widget/provider/ads_provider.dart';
 import '../firebaseauthprovider/home_firebase_auth.dart';
 import '../provider/internet_provider.dart';
 //ignore: must_be_immutable
@@ -36,10 +40,34 @@ class _ContinueReadingScreenState extends State<ContinueReadingScreen> {
   List ratingList = [];
 
   late Timestamp timestamp;
+  late Timer timer;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Provider.of<AdsProvider>(context,listen: false).createInterstitialAd();
+    Provider.of<AdsProvider>(context,listen: false).loadBannerAd();
+    timer = Timer. periodic(const Duration(seconds: 55), (Timer t) => Provider.of<AdsProvider>(context,listen: false).loadBannerAd());
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar:
+      Provider.of<AdsProvider>(context, listen: false).bannerAd == null
+          ? const SizedBox.shrink()
+          : SizedBox(
+        height: Provider.of<AdsProvider>(context, listen: false)
+            .bannerAd!
+            .size
+            .height
+            .toDouble(),
+        width: double.infinity,
+        child: AdWidget(
+            ad: Provider.of<AdsProvider>(context, listen: false)
+                .bannerAd!),
+      ),
       body: Consumer<InternetProvider>(builder: (context,internetSnapshot,_){
         internetSnapshot.checkInternet().then((value) {
         });
@@ -113,7 +141,12 @@ class _ContinueReadingScreenState extends State<ContinueReadingScreen> {
                                               currentUserMobile: '${FirebaseAuth.instance.currentUser!.phoneNumber}',
                                               bookPdf: widget.snapshotData['bookPdf'],
                                               currentDate: DateTime.now().toString().substring(0,10),
-                                              timestamp: Timestamp.now());
+                                              timestamp: Timestamp.now()).then((value) {
+                                                  Provider.of<AdsProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .showInterstitialAd();
+                                                });
                                           },
                                         style: ButtonStyle(
                                             backgroundColor: MaterialStateProperty.all<Color>(AppColor.whiteColor),
@@ -436,7 +469,7 @@ class _ContinueReadingScreenState extends State<ContinueReadingScreen> {
               ],
             ),
           ) : noInternetDialog();
-        }
+        },
       ),
     );
   }

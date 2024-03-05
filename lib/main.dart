@@ -5,6 +5,7 @@ import 'package:ebook/login/provider/login_provider.dart';
 import 'package:ebook/login/splash_screen.dart';
 import 'package:ebook/utils/app_colors.dart';
 import 'package:ebook/widget/loading_screen.dart';
+import 'package:ebook/widget/provider/ads_provider.dart';
 import 'package:ebook/widget/provider/loading_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ import 'login/firebaseauth/phone_sign_in_auth.dart';
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  MobileAds.instance.initialize();
+  await MobileAds.instance.initialize();
   await Firebase.initializeApp(
      // options: FirebaseOptions(
      //     apiKey: "AIzaSyA4dSktEQqWllJyGd_neNwo9H3K3_z3IRc",
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<LoadingProvider>(create: (_) => LoadingProvider()),
         ChangeNotifierProvider<AddBookProvider>(create: (_) => AddBookProvider()),
         ChangeNotifierProvider<HomeProvider>(create: (_) => HomeProvider()),
+        ChangeNotifierProvider<AdsProvider>(create: (_) => AdsProvider()),
     ],
       child: MaterialApp(
         navigatorKey: navigatorKey,

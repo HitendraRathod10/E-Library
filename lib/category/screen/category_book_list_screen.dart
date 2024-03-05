@@ -1,12 +1,15 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ebook/firebase/firebase_collection.dart';
 import 'package:ebook/home/screen/continue_reading.dart';
 import 'package:ebook/home/screen/no_internet_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import '../../home/provider/internet_provider.dart';
 import '../../utils/app_colors.dart';
+import '../../widget/provider/ads_provider.dart';
 //ignore: must_be_immutable
 class CategoryBookListScreen extends StatefulWidget {
 
@@ -18,6 +21,17 @@ class CategoryBookListScreen extends StatefulWidget {
 }
 
 class _CategoryBookListScreenState extends State<CategoryBookListScreen> {
+
+  late Timer timer;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Provider.of<AdsProvider>(context,listen: false).loadBannerAd();
+    timer = Timer. periodic(const Duration(seconds: 55), (Timer t) => Provider.of<AdsProvider>(context,listen: false).loadBannerAd());
+  }
+
   @override
   Widget build(BuildContext context) {
     debugPrint(widget.genreName);
@@ -25,6 +39,17 @@ class _CategoryBookListScreenState extends State<CategoryBookListScreen> {
       appBar: AppBar(
         title: Text(widget.genreName),
       ),
+      bottomNavigationBar:
+          Provider.of<AdsProvider>(context, listen: false).bannerAd == null
+              ? const SizedBox.shrink()
+              : SizedBox(
+                  height: Provider.of<AdsProvider>(context, listen: false)
+                      .bannerAd!.size.height.toDouble(),
+                  width: double.infinity,
+                  child: AdWidget(
+                      ad: Provider.of<AdsProvider>(context, listen: false)
+                          .bannerAd!),
+                ),
       body: Consumer<InternetProvider>(builder: (context,internetSnapshot,_){
         internetSnapshot.checkInternet().then((value) {
         });

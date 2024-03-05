@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:ebook/addbook/add_book_screen.dart';
 import 'package:ebook/mylibrary/my_library.dart';
 import 'package:ebook/profile/profile_screen.dart';
+import 'package:ebook/widget/provider/ads_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:provider/provider.dart';
 import '../category/category_screen.dart';
 import '../home/home_screen.dart';
 import '../utils/ad_helper.dart';
@@ -18,8 +22,7 @@ class BottomNavBarScreen extends StatefulWidget {
 class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
 
   int _selectedIndex=0;
-  BannerAd? bannerAd;
-  bool isBannerAdReady = false;
+  late Timer timer;
   String imageUrl="https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg";
   List<Widget> buildScreen(){
     return [
@@ -36,31 +39,14 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
       _selectedIndex = index;
     });
   }
-  void loadBannerAd() {
-    bannerAd = BannerAd(
-      adUnitId: AdHelper.bannerAdUnitId,
-      request: const AdRequest(),
-      size: AdSize.banner,
-      listener: BannerAdListener(
-        onAdLoaded: (_) {
-          setState(() {
-            isBannerAdReady = true;
-          });
-        },
-        onAdFailedToLoad: (ad, err) {
-          isBannerAdReady = false;
-          ad.dispose();
-        },
-      ),
-    );
-    bannerAd!.load();
-  }
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    loadBannerAd();
+    Provider.of<AdsProvider>(context,listen: false).loadBannerAd();
+    timer = Timer. periodic(const Duration(seconds: 55), (Timer t) => Provider.of<AdsProvider>(context,listen: false).loadBannerAd());
   }
 
   @override
@@ -72,12 +58,18 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          bannerAd == null
+          Provider.of<AdsProvider>(context,listen: false).bannerAd == null
               ? const SizedBox.shrink()
               : SizedBox(
-                  height: 50,
+                  height: Provider.of<AdsProvider>(context, listen: false)
+                      .bannerAd!
+                      .size
+                      .height
+                      .toDouble(),
                   width: double.infinity,
-                  child: AdWidget(ad: bannerAd!),
+                  child: AdWidget(
+                      ad: Provider.of<AdsProvider>(context, listen: false)
+                          .bannerAd!),
                 ),
           BottomNavigationBar(
             type: BottomNavigationBarType.shifting,

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,12 +9,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import '../../mixin/textfield_mixin.dart';
 import '../firebase/firebase_collection.dart';
 import '../home/provider/internet_provider.dart';
 import '../login/provider/login_provider.dart';
 import '../utils/app_utils.dart';
+import '../widget/provider/ads_provider.dart';
 import '../widget/provider/loading_provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -28,7 +31,7 @@ class _EditProfileScreen extends State<EditProfileScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController mobileController = TextEditingController();
   final formKey = GlobalKey<FormState>();
-
+  late Timer timer;
   File? file;
   var url = '';
   String docId = '';
@@ -95,12 +98,35 @@ class _EditProfileScreen extends State<EditProfileScreen> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Provider.of<AdsProvider>(context,listen: false).loadBannerAd();
+    timer = Timer. periodic(const Duration(seconds: 55), (Timer t) => Provider.of<AdsProvider>(context,listen: false).loadBannerAd());
+    // print("bannerId in edit profile ${Provider.of<AdsProvider>(context, listen: false).bannerAd == null}");
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.whiteColor,
       appBar: AppBar(
         title: const Text('Edit Profile'),
       ),
+      bottomNavigationBar:
+          Provider.of<AdsProvider>(context, listen: false).bannerAd == null
+              ? const Text("bannerAd == null")
+              : SizedBox(
+                  height: Provider.of<AdsProvider>(context, listen: false)
+                      .bannerAd!
+                      .size
+                      .height
+                      .toDouble(),
+                  width: double.infinity,
+                  child: AdWidget(
+                      ad: Provider.of<AdsProvider>(context, listen: false)
+                          .bannerAd!),
+                ),
       body: Consumer<InternetProvider>(builder: (context, internetSnapshot, _) {
         internetSnapshot.checkInternet().then((value) {});
         return internetSnapshot.isInternet

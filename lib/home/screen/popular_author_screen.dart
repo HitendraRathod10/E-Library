@@ -1,11 +1,15 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ebook/firebase/firebase_collection.dart';
 import 'package:ebook/home/screen/continue_reading.dart';
 import 'package:ebook/home/screen/no_internet_screen.dart';
 import 'package:ebook/utils/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 
+import '../../widget/provider/ads_provider.dart';
 import '../provider/internet_provider.dart';
 //ignore: must_be_immutable
 class PopularAuthorScreen extends StatefulWidget {
@@ -18,12 +22,37 @@ class PopularAuthorScreen extends StatefulWidget {
 }
 
 class _PopularAuthorScreenState extends State<PopularAuthorScreen> {
+
+  late Timer timer;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Provider.of<AdsProvider>(context,listen: false).loadBannerAd();
+    timer = Timer. periodic(const Duration(seconds: 55), (Timer t) => Provider.of<AdsProvider>(context,listen: false).loadBannerAd());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Author Details'),
       ),
+      bottomNavigationBar:
+          Provider.of<AdsProvider>(context, listen: false).bannerAd == null
+              ? const SizedBox.shrink()
+              : SizedBox(
+                  height: Provider.of<AdsProvider>(context, listen: false)
+                      .bannerAd!
+                      .size
+                      .height
+                      .toDouble(),
+                  width: double.infinity,
+                  child: AdWidget(
+                      ad: Provider.of<AdsProvider>(context, listen: false)
+                          .bannerAd!),
+                ),
       body: Consumer<InternetProvider>(builder: (context,internetSnapshot,_){
         internetSnapshot.checkInternet().then((value) {
         });

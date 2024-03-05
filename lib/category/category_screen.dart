@@ -1,6 +1,7 @@
 import 'package:ebook/category/screen/category_book_list_screen.dart';
 import 'package:ebook/home/screen/no_internet_screen.dart';
 import 'package:ebook/utils/app_images.dart';
+import 'package:ebook/widget/provider/ads_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -40,8 +41,9 @@ class CategoryScreen extends StatelessWidget {
       CategoryListModel(gridColor: Colors.deepPurpleAccent, bookType: 'Historical',bookImage: AppImage.historical),
     ];
 
-    return  Consumer<InternetProvider>(builder: (context,internetSnapshot,_){
+    return  Consumer2<InternetProvider,AdsProvider>(builder: (context,internetSnapshot,adsProvider,_){
       internetSnapshot.checkInternet().then((value) {
+        adsProvider.createInterstitialAd();
       });
       return internetSnapshot.isInternet?
          SafeArea(
@@ -68,6 +70,7 @@ class CategoryScreen extends StatelessWidget {
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
                         onTap: (){
+                          adsProvider.showInterstitialAd();
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>CategoryBookListScreen(genreName: bookType[index].bookType,)));
                         },
                         child: Padding(
