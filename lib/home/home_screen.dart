@@ -15,7 +15,6 @@ import '../firebase/firebase_collection.dart';
 import '../shimmers/popular_author_shimmer.dart';
 import '../widget/provider/ads_provider.dart';
 import '../widget/slider_widget.dart';
-import '../../utils/ad_helper.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
